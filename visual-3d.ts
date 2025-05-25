@@ -8,7 +8,7 @@
 // tslint:dsiable:no-new-decorators
 
 import {LitElement, css, html} from 'lit';
-import {customElement, property} from 'lit/decorators';
+import {customElement, property} from '@lit/reactive-element/decorators.js';
 import {Analyser} from './analyser';
 
 import * as THREE from 'three';
@@ -114,13 +114,18 @@ export class GdmLiveAudioVisuals3D extends LitElement {
     const geometry = new THREE.IcosahedronGeometry(1, 10);
 
     new EXRLoader().load(
-      'applet:piz_compressed.exr',
+      '/piz_compressed.exr',
       (texture: THREE.Texture) => {
+        console.log('EXR texture loaded successfully');
         texture.mapping = THREE.EquirectangularReflectionMapping;
         const exrCubeRenderTarget = pmremGenerator.fromEquirectangular(texture);
         sphereMaterial.envMap = exrCubeRenderTarget.texture;
         sphere.visible = true;
       },
+      undefined,
+      (error) => {
+        console.error('Error loading EXR texture:', error);
+      }
     );
 
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
